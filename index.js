@@ -35,6 +35,7 @@ async function run() {
       const query = {_id : ObjectId(id)}
        const order = await jewelryCollection.findOne(query);
         res.send(order);
+        console.log(id)
     })
     // get all data
     app.get("/jewelries", async (req, res) => {
@@ -42,6 +43,14 @@ async function run() {
       const result = await cursor.toArray();
       res.send(result);
     });
+    // show data based on email
+    app.get('/placedOrder/:email',async (req,res) => {
+      const myOrder = await customer.find({
+        email:req.params.email,
+      }).toArray();
+      res.send(myOrder)
+
+    })
     // insert data one by one
     app.post("/jewelries", async (req, res) => {
       const cursor = req.body;
