@@ -23,7 +23,7 @@ async function run() {
 
     const database = client.db("simple-Jewelry-website");
     const jewelryCollection = database.collection("jewelryCollection");
-
+    const customer = database.collection("customer");
     app.post("/jewelries", async (req, res) => {
       const jewelries = req.body;
       const result = jewelryCollection.insertOne(jewelries);
@@ -42,6 +42,32 @@ async function run() {
       const result = await cursor.toArray();
       res.send(result);
     });
+    // insert data one by one
+    app.post("/jewelries", async (req, res) => {
+      const cursor = req.body;
+      const result = await jewelryCollection.insertOne(cursor)
+      res.json(result);
+    });
+    // 
+    app.post('/placeOrder',async (req,res)=> {
+      const order = req.body;
+      const result = await customer.insertOne(order);
+      res.json(result);
+    })
+    
+    app.get('/placedOrder',async (req,res)=>{
+      const cursor = await customer.find({});
+      const result = await cursor.toArray();
+      res.send(result)
+    })
+    // delete order
+    app.delete('/deleteOrder/:id',async (req,res) =>{
+      const id = req.params.id;
+      const result = await customer.deleteOne({
+        _id:ObjectId(id)
+      });
+      res.send(result);
+    })
   } finally {
     // client.close();
   }
