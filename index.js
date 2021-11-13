@@ -55,27 +55,27 @@ async function run() {
         .toArray();
       res.send(myOrder);
     });
-   
+
     // user admin
-    app.put('/users/admin',async (req,res) => {
+    app.put("/users/admin", async (req, res) => {
       const user = req.body;
-      const filter = {email:user?.email};
-      const updateDoc = {$set : {role:"admin"}};
-      const result = await usersCollection.updateOne(filter,updateDoc);
-      console.log(user)
-      res.json(result)
-    })
-  // get admin using email
-  app.get('/users/:email',async (req,res) => {
-    let isAdmin = false;
-    const user = await usersCollection.findOne({
-      email:req.params.email
+      const filter = { email: user?.email };
+      const updateDoc = { $set: { role: "admin" } };
+      const result = await usersCollection.updateOne(filter, updateDoc);
+      console.log(user);
+      res.json(result);
     });
-    if(user?.role == 'admin'){
-      isAdmin = true;
-    }
-    res.send({admin:isAdmin})
-  })
+    // get admin using email
+    app.get("/users/:email", async (req, res) => {
+      let isAdmin = false;
+      const user = await usersCollection.findOne({
+        email: req.params.email,
+      });
+      if (user?.role == "admin") {
+        isAdmin = true;
+      }
+      res.send({ admin: isAdmin });
+    });
     // insert data one by one
     app.post("/jewelries", async (req, res) => {
       const cursor = req.body;
@@ -141,7 +141,21 @@ async function run() {
       );
       res.json(result);
     });
-   
+    //  update pending status
+    //Update Order
+    app.put("/updateOrder/:id", async (req, res) => {
+      const id = req.params.id;
+      console.log("updating order", id);
+      const filter = { _id: id };
+      const options = { upsert: true };
+      const updateDoc = {
+        $set: {
+          status: "Approved",
+        },
+      };
+      const result = await customer.updateOne(filter, updateDoc);
+      res.json(result);
+    });
   } finally {
     // client.close();
   }
