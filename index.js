@@ -143,10 +143,11 @@ async function run() {
     });
     //  update pending status
     //Update Order
+
     app.put("/updateOrder/:id", async (req, res) => {
       const id = req.params.id;
       console.log("updating order", id);
-      const filter = { _id: id };
+      const filter = { _id: ObjectId(id) };
       const options = { upsert: true };
       const updateDoc = {
         $set: {
