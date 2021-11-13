@@ -62,7 +62,6 @@ async function run() {
       const filter = { email: user?.email };
       const updateDoc = { $set: { role: "admin" } };
       const result = await usersCollection.updateOne(filter, updateDoc);
-      console.log(user);
       res.json(result);
     });
     // get admin using email
@@ -141,21 +140,27 @@ async function run() {
       );
       res.json(result);
     });
-    //  update pending status
-    //Update Order
+
+    //Update Order status
 
     app.put("/updateOrder/:id", async (req, res) => {
       const id = req.params.id;
-      console.log("updating order", id);
       const filter = { _id: ObjectId(id) };
       const options = { upsert: true };
       const updateDoc = {
         $set: {
-          status: "Approved",
+          status: "Shipped",
         },
       };
       const result = await customer.updateOne(filter, updateDoc);
       res.json(result);
+    });
+    // manage product delete 
+    app.delete('/deleteProduct/:id',async (req,res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const result = await jewelryCollection.deleteOne(query);
+      res.json(result)
     });
   } finally {
     // client.close();
