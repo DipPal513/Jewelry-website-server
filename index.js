@@ -32,7 +32,7 @@ async function run() {
       req.json(result);
     });
     // update pending status
-    
+
     // find data using id
     app.get("/jewelries/:id", async (req, res) => {
       const id = req.params.id;
@@ -55,17 +55,30 @@ async function run() {
         .toArray();
       res.send(myOrder);
     });
+   
+    // user admin
+    app.put('/users/admin',async (req,res) => {
+      const user = req.body;
+      const filter = {email:user?.email};
+      const updateDoc = {$set : {role:"admin"}};
+      const result = await usersCollection.updateOne(filter,updateDoc);
+      console.log(user)
+      res.json(result)
+    })
+    // get adming using email
     app.get("/users/:email", async (req, res) => {
+      // const email = req.params.email;
+      // const query = { email };
+      // const user = await usersCollection.find({});
+      // let isAdmin = false;
+      // user?.role == 'admin' ? (isAdmin = true) : (isAdmin = false);
+      // console.log(query,user)
+   
+      // res.send({ admin: isAdmin });
       const email = req.params.email;
-      const query = { email};
-      const user = await customer.find(query);
-      let isAdmin = false;
-      console.log(user?.role)
-      if (user?.role == "admin") {
-        isAdmin = true;
-      }
-      console.log(isAdmin)
-      res.send({ admin: isAdmin });
+      const user = await usersCollection.find();
+      console.log(user.email);
+      res.send(user)
     });
     // insert data one by one
     app.post("/jewelries", async (req, res) => {
@@ -80,18 +93,19 @@ async function run() {
       res.json(result);
     });
     // post all reviews
-    app.post('/reviews',async (req,res) => {
+    app.post("/reviews", async (req, res) => {
       const review = req.body;
-      const data = await reviews.insertOne(review)
+      const data = await reviews.insertOne(review);
       const result = data.toArray();
-      res.json(result)
-    })
+      res.json(result);
+    });
     // get all reviews
-    app.get('/reviews',async (req,res) =>{
+    app.get("/reviews", async (req, res) => {
       const cursor = await reviews.find({});
       const result = await cursor.toArray();
       res.send(result);
-    })
+    });
+    //get all placed order item
     app.get("/placedOrder", async (req, res) => {
       const cursor = await customer.find({});
       const result = await cursor.toArray();
@@ -111,6 +125,7 @@ async function run() {
       const result = await usersCollection.insertOne(user);
       res.json(result);
     });
+    // get user data
     app.get("/users", async (req, res) => {
       const result = await usersCollection.find({}).toArray();
 
@@ -119,7 +134,7 @@ async function run() {
     // update user data
     app.put("/users", async (req, res) => {
       const user = req.body;
-    
+
       const filter = { email: user.email };
       const options = { upsert: true };
       const updateDoc = { $set: user };
@@ -130,14 +145,7 @@ async function run() {
       );
       res.json(result);
     });
-    // user admin
-    app.put("/users/admin", async (req, res) => {
-      const user = req.body;
-      const filter = { email: user.email };
-      const updateDoc = { $set: { role: "admin" } };
-      const result = await usersCollection.updateOne(filter, updateDoc);
-      res.json(result);
-    });
+   
   } finally {
     // client.close();
   }
