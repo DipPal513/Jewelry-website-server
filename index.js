@@ -31,6 +31,8 @@ async function run() {
       const result = jewelryCollection.insertOne(jewelries);
       req.json(result);
     });
+    // update pending status
+    
     // find data using id
     app.get("/jewelries/:id", async (req, res) => {
       const id = req.params.id;
@@ -55,13 +57,14 @@ async function run() {
     });
     app.get("/users/:email", async (req, res) => {
       const email = req.params.email;
-      const query = { email: email };
-      const user = await usersCollection.find(query);
+      const query = { email};
+      const user = await customer.find(query);
       let isAdmin = false;
       console.log(user?.role)
       if (user?.role == "admin") {
         isAdmin = true;
       }
+      console.log(isAdmin)
       res.send({ admin: isAdmin });
     });
     // insert data one by one
