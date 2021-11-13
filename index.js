@@ -65,21 +65,17 @@ async function run() {
       console.log(user)
       res.json(result)
     })
-    // get adming using email
-    app.get("/users/:email", async (req, res) => {
-      // const email = req.params.email;
-      // const query = { email };
-      // const user = await usersCollection.find({});
-      // let isAdmin = false;
-      // user?.role == 'admin' ? (isAdmin = true) : (isAdmin = false);
-      // console.log(query,user)
-   
-      // res.send({ admin: isAdmin });
-      const email = req.params.email;
-      const user = await usersCollection.find();
-      console.log(user.email);
-      res.send(user)
+  // get admin using email
+  app.get('/users/:email',async (req,res) => {
+    let isAdmin = false;
+    const user = await usersCollection.findOne({
+      email:req.params.email
     });
+    if(user?.role == 'admin'){
+      isAdmin = true;
+    }
+    res.send({admin:isAdmin})
+  })
     // insert data one by one
     app.post("/jewelries", async (req, res) => {
       const cursor = req.body;
